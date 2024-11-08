@@ -1,36 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Button } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const Home = () => {
   const router = useRouter();
-  const { name, latitude, longitude } = useLocalSearchParams();
+  const { markers: serializedMarkers } = useLocalSearchParams();
 
-  const [markers, setMarkers] = useState([
-    { id: 1, latitude: 37.78825, longitude: -122.4324, title: "Initial Marker" },
-  ]);
+  const [markers, setMarkers] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
-    if (name && latitude && longitude) {
-      const newMarker = {
-        id: markers.length + 1,
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-        title: name,
-      };
-      setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+    const getUserLocation = async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Permission to access location was denied');
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location.coords);
+      } catch (error) {
+        console.error(error);
+        alert('Failed to fetch location');
+      }
+    };
+
+    getUserLocation();
+  }, []);
+
+  useEffect(() => {
+    if (serializedMarkers) {
+      const parsedMarkers = JSON.parse(serializedMarkers);
+      setMarkers(parsedMarkers);
     }
-  }, [name, latitude, longitude]);
-  console.log(markers)
+  }, [serializedMarkers]);
+
+  useEffect(() => {
+    if (userLocation && markers.length === 0) {
+      const initialMarker = {
+        id: Date.now(),
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        title: 'Você',
+      };
+      setMarkers((prevMarkers) => [initialMarker, ...prevMarkers]);
+    }
+  }, [userLocation]);
+
+  // Handle marker click to navigate to the EditMarker page
+  const handleMarkerPress = (marker) => {
+    router.push({
+      pathname: '/editMarker',
+      params: { marker: JSON.stringify(marker), markers: JSON.stringify(markers) },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         provider="google"
         region={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude: userLocation?.latitude,
+          longitude: userLocation?.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -40,10 +75,17 @@ const Home = () => {
             key={marker.id}
             coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
             title={marker.title}
+            onPress={() => handleMarkerPress(marker)} // Add onPress handler
           />
         ))}
       </MapView>
-      <Button title="Add New Marker" onPress={() => router.push('/form')} />
+      <Button 
+        title="Add New Marker" 
+        onPress={() => router.push({
+          pathname: '/form',
+          params: { markers: JSON.stringify(markers) },
+        })} 
+      />
     </View>
   );
 };
