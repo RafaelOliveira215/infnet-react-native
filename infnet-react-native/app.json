@@ -4,7 +4,7 @@
     "slug": "infnet-react-native",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/fav.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -13,13 +13,24 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA87QuYxcLuOqFeahwb1XLSs79fpOgq22s"
+        }
+      },
       "supportsTablet": true
     },
     "android": {
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA87QuYxcLuOqFeahwb1XLSs79fpOgq22s"
+        }
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rafaeloliveira215.infnetreactnative"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +42,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "7e8f9344-916a-43f9-8cef-1d59b00c8c95"
+      }
     }
   }
 }
