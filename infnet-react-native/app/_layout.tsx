@@ -4,7 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
-
+import { ApolloProvider } from '@apollo/client';
+import client from '../apolloClient';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -24,6 +25,7 @@ export default function RootLayout() {
   }
 
   return (
+    <ApolloProvider client={client}>
     <Provider store={store}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: true, headerTitle: 'Home' }} />
@@ -32,6 +34,7 @@ export default function RootLayout() {
           <Stack.Screen name="markersList" options={{ headerShown: true, headerTitle: 'Listar localização' }} />
         </Stack>
     </Provider>
+    </ApolloProvider>
   );
 }
 
