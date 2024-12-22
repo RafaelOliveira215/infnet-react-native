@@ -68,7 +68,7 @@ const EditMarker = () => {
       );
 
       router.push({
-        pathname: '/',
+        pathname: '/map',
         params: { markers: JSON.stringify(updatedMarkers) },
       });
     }

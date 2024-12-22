@@ -27,8 +27,10 @@ export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
     <Provider store={store}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: true, headerTitle: 'Home' }} />
+        <Stack initialRouteName='login'>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+          <Stack.Screen name="map" options={{ headerShown: false }} />
           <Stack.Screen name="form" options={{ headerShown: true, headerTitle: 'Nova localização' }} />
           <Stack.Screen name="editMarker" options={{ headerShown: true, headerTitle: 'Editar localização' }} />
           <Stack.Screen name="markersList" options={{ headerShown: true, headerTitle: 'Listar localização' }} />

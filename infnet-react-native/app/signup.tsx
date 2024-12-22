@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
-import {  useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native'; // For navigation
+import { useRouter } from 'expo-router';
 
-const LoginScreen = () => {
+const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
+  const navigation = useNavigation();
+
+  // Handle signup action (you can add your own logic here)
+  const handleSignup = () => {
+    if (password === confirmPassword) {
+      console.log('Signing up with:', email, password);
+      // Add signup logic (API calls, etc.)
+    } else {
+      console.log('Passwords do not match');
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.title}>Login</Text>
+          <Text style={styles.title}>Sign Up</Text>
           
           {/* Email input */}
           <TextInput
@@ -33,27 +46,33 @@ const LoginScreen = () => {
             mode="outlined"
             style={styles.input}
           />
+          
+          {/* Confirm password input */}
+          <TextInput
+            label="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            mode="outlined"
+            style={styles.input}
+          />
 
-          {/* Login button */}
-          <Button mode="contained"  onPress={() =>
-          router.push({
-            pathname: '/map',
-          })
-        } style={styles.button}>
-            Login
+          {/* Sign up button */}
+          <Button mode="contained" onPress={handleSignup} style={styles.button}>
+            Sign Up
           </Button>
 
-          {/* Button to navigate to the signup screen */}
+          {/* Button to navigate back to the login screen */}
           <Button
             mode="text"
             onPress={() =>
-              router.push({
-                pathname: '/signup',
-              })
-            } // Navigate to signup screen
-            style={styles.signupButton}
+                router.push({
+                  pathname: '/',
+                })
+              } // Navigate to login screen
+            style={styles.loginButton}
           >
-            Don't have an account? Sign up
+            Already have an account? Log in
           </Button>
         </Card.Content>
       </Card>
@@ -84,9 +103,9 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
   },
-  signupButton: {
+  loginButton: {
     marginTop: 12,
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;
