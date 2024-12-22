@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, Button, Text } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -10,6 +10,7 @@ const Home = () => {
 
   const [markers, setMarkers] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getUserLocation = async () => {
@@ -17,14 +18,16 @@ const Home = () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           alert('Permission to access location was denied');
+          setIsLoading(false);
           return;
         }
 
         let location = await Location.getCurrentPositionAsync({});
         setUserLocation(location.coords);
+        setIsLoading(false);
       } catch (error) {
-        console.error(error);
         alert('Failed to fetch location');
+        setIsLoading(false);
       }
     };
 
@@ -33,8 +36,16 @@ const Home = () => {
 
   useEffect(() => {
     if (serializedMarkers) {
-      const parsedMarkers = JSON.parse(serializedMarkers);
-      setMarkers(parsedMarkers);
+      try {
+        const parsedMarkers = JSON.parse(serializedMarkers);
+        const validMarkers = parsedMarkers.filter(
+          (marker) =>
+            marker.latitude && marker.longitude && marker.title && marker.id
+        );
+        setMarkers(validMarkers);
+      } catch (error) {
+        console.error('Error parsing markers:', error);
+      }
     }
   }, [serializedMarkers]);
 
@@ -50,41 +61,59 @@ const Home = () => {
     }
   }, [userLocation]);
 
-  // Handle marker click to navigate to the EditMarker page
-  const handleMarkerPress = (marker) => {
+  const handleMarkerPress = useCallback((marker) => {
     router.push({
       pathname: '/editMarker',
       params: { marker: JSON.stringify(marker), markers: JSON.stringify(markers) },
     });
-  };
+  }, [markers, router]);
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider="google"
-        region={{
-          latitude: userLocation?.latitude,
-          longitude: userLocation?.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      >
-        {markers.map((marker) => (
-          <Marker
-            key={marker.id}
-            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-            title={marker.title}
-            onPress={() => handleMarkerPress(marker)} // Add onPress handler
-          />
-        ))}
-      </MapView>
-      <Button 
-        title="Add New Marker" 
-        onPress={() => router.push({
-          pathname: '/form',
-          params: { markers: JSON.stringify(markers) },
-        })} 
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <Text>Loading map...</Text>
+        </View>
+      ) : (
+        userLocation && (
+          <MapView
+            style={styles.map}
+            provider="google"
+            region={{
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {markers.map((marker) => (
+              <Marker
+                key={marker.id}
+                coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
+                title={marker.title}
+                onPress={() => handleMarkerPress(marker)}
+              />
+            ))}
+          </MapView>
+        )
+      )}
+      <Button
+        title="Adicionar localização"
+        onPress={() =>
+          router.push({
+            pathname: '/form',
+            params: { markers: JSON.stringify(markers) },
+          })
+        }
+      />
+      <Button
+        title="Listar Localizações"
+        onPress={() =>
+          router.push({
+            pathname: '/markersList', // New route for marker list page
+            params: { markers: JSON.stringify(markers) }, // Pass markers as route params
+          })
+        }
       />
     </View>
   );
@@ -99,6 +128,11 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '80%',
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
 });
 
