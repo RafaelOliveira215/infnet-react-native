@@ -110,8 +110,8 @@ const Home = () => {
         title="Listar Localizações"
         onPress={() =>
           router.push({
-            pathname: '/markersList', // New route for marker list page
-            params: { markers: JSON.stringify(markers) }, // Pass markers as route params
+            pathname: '/markersList',
+            params: { markers: JSON.stringify(markers) },
           })
         }
       />

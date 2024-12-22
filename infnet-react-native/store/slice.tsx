@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  theme: 'light',  // Default theme
+  theme: 'light',
   markers: [],
   countries:[],
 };
@@ -15,7 +15,7 @@ const themeSlice = createSlice({
       state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
     addMarker(state, action) {
-      state.markers.push(action.payload);  // Adiciona o novo marcador à lista
+      state.markers.push(action.payload);
     },
     setCountries(state, action) {
       state.countries.push(action.payload);

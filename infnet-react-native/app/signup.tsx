@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../FirebaseConfig'; // Import auth from FirebaseConfig
+import { auth } from '../FirebaseConfig';
 
 const SignupScreen = () => {
   const [email, setEmail] = useState('');
@@ -18,12 +18,12 @@ const SignupScreen = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log('User signed up:', user);
-          router.push('/'); // Navigate to the login screen (or home screen)
+          router.push('/'); 
         })
         .catch((error) => {
           const errorMessage = error.message;
           console.error('Error during sign up:', errorMessage);
-          setError(errorMessage); // Set error to show error message
+          setError(errorMessage);
         });
     } else {
       setError('Passwords do not match');
@@ -34,7 +34,7 @@ const SignupScreen = () => {
     <View style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.title}>Sign Up</Text>
+          <Text style={styles.title}>Cadastro</Text>
 
           <TextInput
             label="Email"
@@ -46,7 +46,7 @@ const SignupScreen = () => {
           />
 
           <TextInput
-            label="Password"
+            label="Senha"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -55,7 +55,7 @@ const SignupScreen = () => {
           />
 
           <TextInput
-            label="Confirm Password"
+            label="Confirme Senha"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -63,19 +63,18 @@ const SignupScreen = () => {
             style={styles.input}
           />
 
-          {/* Display error message if any */}
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <Button mode="contained" onPress={handleSignup} style={styles.button}>
-            Sign Up
+            Cadastre-se
           </Button>
 
           <Button
             mode="text"
-            onPress={() => router.push('/')} // Navigate to login screen
+            onPress={() => router.push('/')}
             style={styles.loginButton}
           >
-            Already have an account? Log in
+            Ja tem uma conta? Entre
           </Button>
         </Card.Content>
       </Card>

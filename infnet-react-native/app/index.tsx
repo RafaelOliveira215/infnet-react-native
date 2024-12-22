@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../FirebaseConfig'; // Import the auth instance from FirebaseConfig
+import { auth } from '../FirebaseConfig';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -11,18 +11,17 @@ const LoginScreen = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Handle login action
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log('User logged in:', user);
-        router.push('/map'); // Navigate to the map screen after successful login
+        router.push('/map');
       })
       .catch((error) => {
         const errorMessage = error.message;
         console.error('Error during login:', errorMessage);
-        setError(errorMessage); // Set error to show error message
+        setError(errorMessage);
       });
   };
 
@@ -32,7 +31,6 @@ const LoginScreen = () => {
         <Card.Content>
           <Text style={styles.title}>Login</Text>
 
-          {/* Email input */}
           <TextInput
             label="Email"
             value={email}
@@ -42,9 +40,8 @@ const LoginScreen = () => {
             style={styles.input}
           />
 
-          {/* Password input */}
           <TextInput
-            label="Password"
+            label="Senha"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -52,21 +49,18 @@ const LoginScreen = () => {
             style={styles.input}
           />
 
-          {/* Display error message if any */}
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          {/* Login button */}
           <Button mode="contained" onPress={handleLogin} style={styles.button}>
             Login
           </Button>
 
-          {/* Button to navigate to the signup screen */}
           <Button
             mode="text"
-            onPress={() => router.push('/signup')} // Navigate to signup screen
+            onPress={() => router.push('/signup')}
             style={styles.signupButton}
           >
-            Don't have an account? Sign up
+            Não tem uma conta? cadastre-se
           </Button>
         </Card.Content>
       </Card>

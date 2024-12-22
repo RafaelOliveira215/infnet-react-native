@@ -1,10 +1,9 @@
-// EditMarker.js
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Appbar, Provider, DefaultTheme, MD3DarkTheme } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useDispatch, useSelector } from 'react-redux'; // Import hooks
-import { toggleTheme } from '../store/slice'; // Import the toggleTheme action
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleTheme } from '../store/slice';
 
 const EditMarker = () => {
   const router = useRouter();
@@ -22,7 +21,6 @@ const EditMarker = () => {
     longitude: '',
   });
 
-  // Access theme from Redux state
   const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
 
@@ -30,20 +28,17 @@ const EditMarker = () => {
     const newErrors = { name: '', latitude: '', longitude: '' };
     let isValid = true;
 
-    // Validate name
     if (!name.trim()) {
       newErrors.name = 'Name is required';
       isValid = false;
     }
 
-    // Validate latitude (numeric and valid range)
     const latitudeNum = parseFloat(latitude);
     if (isNaN(latitudeNum) || latitudeNum < -90 || latitudeNum > 90) {
       newErrors.latitude = 'Latitude must be a number between -90 and 90';
       isValid = false;
     }
 
-    // Validate longitude (numeric and valid range)
     const longitudeNum = parseFloat(longitude);
     if (isNaN(longitudeNum) || longitudeNum < -180 || longitudeNum > 180) {
       newErrors.longitude = 'Longitude must be a number between -180 and 180';
@@ -78,7 +73,7 @@ const EditMarker = () => {
     <Provider theme={theme === 'dark' ? MD3DarkTheme : DefaultTheme}>
       <View style={styles.container}>
         <Appbar.Header>
-          <Appbar.Content title="Edit Location" />
+          <Appbar.Content title="Editar localização" />
           <Appbar.Action icon={theme === 'dark' ? 'brightness-7' : 'brightness-3'} onPress={() => dispatch(toggleTheme())} />
         </Appbar.Header>
 

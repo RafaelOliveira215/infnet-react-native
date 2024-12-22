@@ -1,14 +1,13 @@
-// MarkersList.js
 import React, { useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Text, ActivityIndicator } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
-import { useLocalSearchParams } from 'expo-router'; // Assuming you're using Expo Router
+import { useLocalSearchParams } from 'expo-router';
 import { useQuery, gql } from '@apollo/client';
-import { useDispatch, useSelector } from 'react-redux'; // Import Redux hooks
-import { setCountries } from '../store/slice'; // Import the setCountries action
+import { useDispatch, useSelector } from 'react-redux';
+import { setCountries } from '../store/slice';
 
 const MarkersList = () => {
-  const { markers: serializedMarkers } = useLocalSearchParams(); // Get serialized markers from route params
+  const { markers: serializedMarkers } = useLocalSearchParams();
   const markers = serializedMarkers ? JSON.parse(serializedMarkers) : [];
 
   const GET_COUNTRIES = gql`
@@ -21,10 +20,9 @@ const MarkersList = () => {
   `;
 
   const { loading, error, data } = useQuery(GET_COUNTRIES);
-  const dispatch = useDispatch(); // Use dispatch to send actions
-  const countries = useSelector((state) => state.theme.countries); // Get countries from Redux store
+  const dispatch = useDispatch();
+  const countries = useSelector((state) => state.theme.countries);
 
-  // On successful data fetching, save countries to Redux store
   useEffect(() => {
     if (data && data.countries) {
       dispatch(setCountries(data.countries));
@@ -37,7 +35,7 @@ const MarkersList = () => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <Text style={styles.sectionTitle}>Markers List</Text>
+        <Text style={styles.sectionTitle}>Lista de marcações</Text>
         {markers?.map((marker) => (
           <Card key={marker.id} style={styles.card}>
             <Card.Content>
@@ -48,12 +46,12 @@ const MarkersList = () => {
           </Card>
         ))}
 
-        <Text style={styles.sectionTitle}>Countries List</Text>
+        <Text style={styles.sectionTitle}>Paises para visitar</Text>
         {countries[0]?.slice(0, 10).map((country) => (
           <Card key={country.code} style={styles.card}>
             <Card.Content>
               <Title>{country.name}</Title>
-              <Paragraph>Code: {country.code}</Paragraph>
+              <Paragraph>Codigo: {country.code}</Paragraph>
             </Card.Content>
           </Card>
         ))}
