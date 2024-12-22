@@ -2,34 +2,39 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { TextInput, Button, Card } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../FirebaseConfig';
 
-const LoginScreen = () => {
+const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('User logged in:', user);
-        router.push('/map');
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        console.error('Error during login:', errorMessage);
-        setError(errorMessage);
-      });
+  const handleSignup = () => {
+    if (password === confirmPassword) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log('User signed up:', user);
+          router.push('/'); 
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          console.error('Error during sign up:', errorMessage);
+          setError(errorMessage);
+        });
+    } else {
+      setError('Passwords do not match');
+    }
   };
 
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Text style={styles.title}>Login</Text>
+          <Text style={styles.title}>Cadastro</Text>
 
           <TextInput
             label="Email"
@@ -49,18 +54,27 @@ const LoginScreen = () => {
             style={styles.input}
           />
 
+          <TextInput
+            label="Confirme Senha"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            mode="outlined"
+            style={styles.input}
+          />
+
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-          <Button mode="contained" onPress={handleLogin} style={styles.button}>
-            Login
+          <Button mode="contained" onPress={handleSignup} style={styles.button}>
+            Cadastre-se
           </Button>
 
           <Button
             mode="text"
-            onPress={() => router.push('/signup')}
-            style={styles.signupButton}
+            onPress={() => router.push('/')}
+            style={styles.loginButton}
           >
-            Não tem uma conta? cadastre-se
+            Ja tem uma conta? Entre
           </Button>
         </Card.Content>
       </Card>
@@ -91,7 +105,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
   },
-  signupButton: {
+  loginButton: {
     marginTop: 12,
   },
   errorText: {
@@ -101,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;

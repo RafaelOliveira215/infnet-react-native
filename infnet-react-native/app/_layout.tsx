@@ -1,16 +1,14 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
+import { ApolloProvider } from '@apollo/client';
+import client from '../apolloClient';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -21,17 +19,24 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+
   if (!loaded) {
     return null;
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: true, headerTitle:'Home' }} />
-        <Stack.Screen name="form" options={{ headerShown: true, headerTitle:'Nova localização' }}/>
-        <Stack.Screen name="editMarker" options={{ headerShown: true, headerTitle:'Editar localização' }}/>
-      </Stack>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+    <Provider store={store}>
+        <Stack initialRouteName='login'>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+          <Stack.Screen name="map" options={{ headerShown: false }} />
+          <Stack.Screen name="form" options={{ headerShown: true, headerTitle: 'Nova localização' }} />
+          <Stack.Screen name="editMarker" options={{ headerShown: true, headerTitle: 'Editar localização' }} />
+          <Stack.Screen name="markersList" options={{ headerShown: true, headerTitle: 'Listar localização' }} />
+        </Stack>
+    </Provider>
+    </ApolloProvider>
   );
 }
+
